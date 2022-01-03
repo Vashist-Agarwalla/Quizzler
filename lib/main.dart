@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'quiz_brain.dart';
 
 QuizBrain quizBrain = QuizBrain();
@@ -29,6 +30,37 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   List<Widget> scoreKeeper = [];
+
+  void checkAnswer(bool userPickedAnswer) {
+    setState(() {
+      if (quizBrain.isFinished() == true) {
+        Alert(
+                context: context,
+                title: "Finished!",
+                desc: "You\'ve reached the end of the quiz.")
+            .show();
+
+        quizBrain.reset();
+
+        scoreKeeper.clear();
+      } else if (quizBrain.getQuestionAnswer() == userPickedAnswer) {
+        scoreKeeper.add(
+          Icon(
+            Icons.check,
+            color: Colors.green,
+          ),
+        );
+      } else {
+        scoreKeeper.add(
+          Icon(
+            Icons.close,
+            color: Colors.red,
+          ),
+        );
+      }
+      quizBrain.nextQuestion();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,15 +100,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked true.
-                if (quizBrain.getQuestionAnswer() == true)
-                  print('correct');
-                else
-                  print('wrong');
-
-                setState(() {
-                  quizBrain.nextQuestion();
-                });
+                checkAnswer(true);
               },
             ),
           ),
@@ -96,14 +120,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked false.
-                if (quizBrain.getQuestionAnswer() == false)
-                  print('correct');
-                else
-                  print('wrong');
-                setState(() {
-                  quizBrain.nextQuestion();
-                });
+                checkAnswer(false);
               },
             ),
           ),
